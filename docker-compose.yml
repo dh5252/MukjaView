@@ -20,6 +20,18 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
 
+  spring:
+    image: dh5252/docker-test-prod
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+        reservation:
+          memory: 500m
+    restart: always
+    ports:
+      - "8082:8080"
+
 volumes:
   mariadb_data:
     driver: local
