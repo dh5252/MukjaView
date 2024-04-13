@@ -34,6 +34,8 @@ jobs:
 
       - name: Make application.properites
         if: |
+          contains(github.ref, 'chiwon')
+        run: |
           mkdir ~/Backend/src/main/resources
           cd ~/Backend/src/main/resources
           echo "${{ secrets.PROPERTIES }}" > ./application.properties
