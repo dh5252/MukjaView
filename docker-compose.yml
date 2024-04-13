@@ -21,7 +21,7 @@ services:
       - mariadb_data:/var/lib/mysql
 
   spring:
-    image: dh5252/docker-test-prod
+    image: dh5252/spring-prod
     deploy:
       resources:
         limits:
