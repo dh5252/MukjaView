@@ -42,7 +42,7 @@ jobs:
         shell: bash
       
       - name: Build with Gradle
-        run: ./gradlew build -x test
+        run: ./Backend/gradlew build -x test
 
       - name: Docker build & push to prod
         if: contains(github.ref, 'chiwon')
@@ -58,7 +58,7 @@ jobs:
         if: contains(github.ref, 'chiwon')
         with:
           host: ${{ secrets.HOST_PROD }}
-          username: cahn
+          username: dh5277
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
