@@ -28,7 +28,7 @@ jobs:
           path: |
             ~/Backend/.gradle/caches
             ~/Backend/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('~/Backend/**/*.gradle*', '~/Backend/**gradle-wrapper.properties'}}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('~/Backend/**/*.gradle*', '~/Backend/**gradle-wrapper.properties')}}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -48,7 +48,7 @@ jobs:
         if: contains(github.ref, 'chiwon')
         run: |
           cd Backend
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secret.DOCKER_PASSWORD }}
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build dockerfile -t ${{ secrets.DOCKER_USERNAME }}/spring-prod .
           docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod
 
