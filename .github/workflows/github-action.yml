@@ -38,11 +38,11 @@ jobs:
         run: |
           mkdir ~/Backend/src/main/resources
           cd ~/Backend/src/main/resources
-          echo "${{ secrets.PROPERTIES }}" > ./application.properties
+          echo "${{ secrets.PROPERTIES }}" > ~/Backend/application.properties
         shell: bash
       
       - name: Build with Gradle
-        run: ./Backend/gradlew build -x test
+        run: ~/Backend/gradlew build -x test
 
       - name: Docker build & push to prod
         if: contains(github.ref, 'chiwon')
