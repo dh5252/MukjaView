@@ -35,8 +35,6 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Make application.properites
-        if: |
-          contains(github.ref, 'chiwon')
         run: |
           mkdir ./Backend/src/main/resources
           cd ./Backend/src/main/resources
@@ -49,7 +47,6 @@ jobs:
           ./gradlew build -x test
 
       - name: Docker build & push to prod
-        if: contains(github.ref, 'chiwon')
         run: |
           cd Backend
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -59,7 +56,6 @@ jobs:
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
-        if: contains(github.ref, 'chiwon')
         with:
           host: ${{ secrets.HOST_PROD }}
           username: dh5277
