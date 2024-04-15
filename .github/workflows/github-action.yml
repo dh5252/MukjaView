@@ -62,8 +62,8 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
-            git checkout main
             cd capstone
+            git checkout main
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod
             sudo docker-compose restart spring
