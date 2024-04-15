@@ -16,7 +16,7 @@
 *.iws
 
 # properties
-src/main/resources/*
+./src/main/resources/*
 
 
 # Gradle
