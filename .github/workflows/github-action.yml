@@ -44,7 +44,9 @@ jobs:
         shell: bash
       
       - name: Build with Gradle
-        run: ./Backend/gradlew build -x test
+        run: |
+          cd Backend
+          ./gradlew build -x test
 
       - name: Docker build & push to prod
         if: contains(github.ref, 'chiwon')
