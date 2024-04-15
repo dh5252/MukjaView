@@ -38,7 +38,7 @@ jobs:
         run: |
           mkdir ./Backend/src/main/resources
           cd ./Backend/src/main/resources
-          echo "${{ secrets.PROPERTIES }}" > ./Backend/application.properties
+          echo "${{ secrets.PROPERTIES }}" > application.properties
         shell: bash
       
       - name: Build with Gradle
