@@ -28,9 +28,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/Backend/.gradle/caches
-            ~/Backend/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('~/Backend/**/*.gradle*', '~/Backend/**gradle-wrapper.properties')}}
+            ./Backend/.gradle/caches
+            ./Backend/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('./Backend/**/*.gradle*', './Backend/**gradle-wrapper.properties')}}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -38,13 +38,13 @@ jobs:
         if: |
           contains(github.ref, 'chiwon')
         run: |
-          mkdir ~/Backend/src/main/resources
-          cd ~/Backend/src/main/resources
-          echo "${{ secrets.PROPERTIES }}" > ~/Backend/application.properties
+          mkdir ./Backend/src/main/resources
+          cd ./Backend/src/main/resources
+          echo "${{ secrets.PROPERTIES }}" > ./Backend/application.properties
         shell: bash
       
       - name: Build with Gradle
-        run: ~/Backend/gradlew build -x test
+        run: ./Backend/gradlew build -x test
 
       - name: Docker build & push to prod
         if: contains(github.ref, 'chiwon')
