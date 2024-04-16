@@ -31,6 +31,17 @@ services:
     restart: always
     ports:
       - "8082:8080"
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ~/nginx_data/conf:/etc/nginx/conf.d
+      - ~/nginx_data/html:/usr/share/nginx/html
+      - ~/nginx_data/certs:/etc/nginx/certs
+      
 
 volumes:
   mariadb_data:
@@ -38,4 +49,4 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ~/db_data 
+      device: ~/db_data
