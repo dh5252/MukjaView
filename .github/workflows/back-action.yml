@@ -65,5 +65,5 @@ jobs:
             git checkout main
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
-            sudo docker-compose up -d --force-recreate spring
+            sudo docker-compose up -d --force-recreate spring:$SHORT_SHA
             sudo docker image prune -f
