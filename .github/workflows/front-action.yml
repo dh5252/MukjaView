@@ -39,6 +39,6 @@ jobs:
             git checkout main
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/nginx-prod
-            sudo docker-compose restart nginx
+            sudo docker-compose up -d --force-recreate nginx
             sudo docker image prune -f
 
