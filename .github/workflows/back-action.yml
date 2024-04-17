@@ -64,5 +64,5 @@ jobs:
             git checkout main
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod
-            sudo docker-compose restart spring
+            sudo docker-compose up -d --force-recreate spring
             sudo docker image prune -f
