@@ -2,7 +2,8 @@ name: CI/CD_back
 
 on:
   push:
-    branches: [ chiwon ]
+    branches:
+      - chiwon
   workflow_dispatch:
 
 permissions:
