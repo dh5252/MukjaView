@@ -50,7 +50,7 @@ jobs:
           cd Backend
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7} .
-        docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7}
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
