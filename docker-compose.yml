@@ -20,27 +20,6 @@ services:
     volumes:
       - mariadb_data:/var/lib/mysql
 
-  spring:
-    image: dh5252/spring-prod
-    deploy:
-      resources:
-        limits:
-          memory: 1g
-        reservations:
-          memory: 500m
-    restart: always
-    ports:
-      - "8082:8080"
-  nginx:
-    image: dh5252/nginx-prod
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: always
-    volumes:
-      - ~/nginx_data/conf:/etc/nginx/conf.d
-      - ~/nginx_data/certs:/etc/nginx/certs
-      
 
 volumes:
   mariadb_data:
