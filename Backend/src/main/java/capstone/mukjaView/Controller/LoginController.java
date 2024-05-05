@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
-    @GetMapping("/api/v1/login")
+    @GetMapping("/api/v1/init")
     @ResponseBody
-    public String myAPI() {
-
-        return "my route";
+    public Boolean getInit() {
+        return false;
     }
 
     @GetMapping("/test")
