@@ -6,6 +6,7 @@ import capstone.mukjaView.Oauth2.CustomSuccessHandler;
 import capstone.mukjaView.Service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -27,6 +28,8 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
+    @Value("${is.local}")
+    private boolean isLocal;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -64,13 +67,26 @@ public class SecurityConfig {
         //JWTFilter 추가
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        //oauth2
-        http
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                .userService(customOAuth2UserService))
-                        .successHandler(customSuccessHandler)
-                );
+
+        //isLocal oauth2
+        if (isLocal == false) {
+            http
+                    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                    .oauth2Login((oauth2) -> oauth2
+                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                    .userService(customOAuth2UserService))
+                            .successHandler(customSuccessHandler)
+                    );
+        }
+        else {
+            http
+                    .oauth2Login((oauth2) -> oauth2
+                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                    .userService(customOAuth2UserService))
+                            .successHandler(customSuccessHandler)
+                    );
+        }
+
 
         //경로별 인가 작업
         http
