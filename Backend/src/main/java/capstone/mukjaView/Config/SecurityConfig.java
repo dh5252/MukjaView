@@ -69,25 +69,30 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //isLocal oauth2
-        if (isLocal == false) {
-            http
-                    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+//        if (isLocal == false) {
+//            http
+//                    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+//                    .oauth2Login((oauth2) -> oauth2
+//                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+//                                    .userService(customOAuth2UserService))
+//                            .successHandler(customSuccessHandler)
+//                    );
+//        }
+//        else {
+//            http
+//                    .oauth2Login((oauth2) -> oauth2
+//                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+//                                    .userService(customOAuth2UserService))
+//                            .successHandler(customSuccessHandler)
+//                    );
+//        }
+
+        http
                     .oauth2Login((oauth2) -> oauth2
                             .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                     .userService(customOAuth2UserService))
                             .successHandler(customSuccessHandler)
                     );
-        }
-        else {
-            http
-                    .oauth2Login((oauth2) -> oauth2
-                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-                                    .userService(customOAuth2UserService))
-                            .successHandler(customSuccessHandler)
-                    );
-        }
-
-
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
