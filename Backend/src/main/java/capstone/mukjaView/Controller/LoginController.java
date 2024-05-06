@@ -1,27 +1,21 @@
 package capstone.mukjaView.Controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class LoginController {
-    @GetMapping("/api/v1/init")
-    @ResponseBody
-    public Boolean getInit() {
-        return false;
+
+
+    @PostMapping("/api/v1/users/{id}/info")
+    public void updateUserInfo(@PathVariable Long id) {
+        // tmp
     }
 
-    @GetMapping("/api/v1/check")
+    @GetMapping("/api/v1/login")
     @ResponseBody
     public String checkAPI() {
         return "testAPI";
-    }
-
-    @GetMapping("/test")
-    @ResponseBody
-    public String testAPI() {
-        return "test";
     }
 }
 
