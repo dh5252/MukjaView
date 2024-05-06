@@ -12,6 +12,12 @@ public class LoginController {
         return false;
     }
 
+    @GetMapping("/api/v1/check")
+    @ResponseBody
+    public String checkAPI() {
+        return "testAPI";
+    }
+
     @GetMapping("/test")
     @ResponseBody
     public String testAPI() {
