@@ -67,5 +67,5 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
             sudo docker stop spring
             sudo docker rm spring
-            sudo docker run -d --name spring -p 8080:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
+            sudo docker run -d --name spring --network nginx_network -p 8080:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
             sudo docker image prune -af
