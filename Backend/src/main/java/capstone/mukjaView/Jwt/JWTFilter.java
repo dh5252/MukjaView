@@ -33,6 +33,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
+        System.out.println("come1?");
         //Authorization 헤더 검증
         if (authorization == null) {
             filterChain.doFilter(request, response);
@@ -40,7 +41,6 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("come?");
         //토큰
         String token = authorization;
 

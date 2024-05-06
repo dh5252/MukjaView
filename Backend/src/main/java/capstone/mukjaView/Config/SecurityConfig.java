@@ -34,6 +34,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
+        System.out.println("come2?");
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
@@ -78,6 +79,7 @@ public class SecurityConfig {
                                     .userService(customOAuth2UserService))
                             .successHandler(customSuccessHandler)
                     );
+        System.out.println("come3?");
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
