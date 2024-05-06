@@ -34,7 +34,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('./Backend/**/*.gradle*', './Backend/**gradle-wrapper.properties')}}
           restore-keys: |
             ${{ runner.os }}-gradle-
-
       - name: Make application.properites
         run: |
           mkdir ./Backend/src/main/resources
@@ -46,14 +45,12 @@ jobs:
         run: |
           cd Backend
           ./gradlew build -x test
-
       - name: Docker build & push to prod
         run: |
           cd Backend
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod
-
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7}
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
@@ -63,15 +60,12 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           envs: GITHUB_SHA
           script: |
+            SHORT_SHA=${GITHUB_SHA:0:7}
             cd capstone
             git checkout main
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod
-            sudo docker-compose up -d --force-recreate spring
-            sudo docker image prune -f
-
-      
-          
-
-        
-      
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
+            sudo docker stop spring
+            sudo docker rm spring
+            sudo docker run -d --name spring --network nginx_network -p 8080:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
+            sudo docker image prune -af
