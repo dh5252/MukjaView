@@ -40,6 +40,7 @@ public class JWTFilter extends OncePerRequestFilter {
             return;
         }
 
+        System.out.println("come?");
         //토큰
         String token = authorization;
 
