@@ -68,25 +68,6 @@ public class SecurityConfig {
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
-        //isLocal oauth2
-//        if (isLocal == false) {
-//            http
-//                    .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-//                    .oauth2Login((oauth2) -> oauth2
-//                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-//                                    .userService(customOAuth2UserService))
-//                            .successHandler(customSuccessHandler)
-//                    );
-//        }
-//        else {
-//            http
-//                    .oauth2Login((oauth2) -> oauth2
-//                            .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
-//                                    .userService(customOAuth2UserService))
-//                            .successHandler(customSuccessHandler)
-//                    );
-//        }
-
         http
                     .oauth2Login((oauth2) -> oauth2
                             .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig

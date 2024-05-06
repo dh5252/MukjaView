@@ -23,6 +23,8 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = null;
         Cookie[] cookies = request.getCookies();
+        if (cookies == null)
+            return;
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("Authorization")) {
                 authorization = cookie.getValue();
