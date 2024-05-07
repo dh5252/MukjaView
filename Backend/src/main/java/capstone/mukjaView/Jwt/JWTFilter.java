@@ -33,7 +33,6 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         }
 
-        System.out.println("come1?");
         //Authorization 헤더 검증
         if (authorization == null) {
             filterChain.doFilter(request, response);
@@ -70,6 +69,7 @@ public class JWTFilter extends OncePerRequestFilter {
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null, customOAuth2User.getAuthorities());
         //세션에 사용자 등록
         SecurityContextHolder.getContext().setAuthentication(authToken);
+
 
         filterChain.doFilter(request, response);
     }

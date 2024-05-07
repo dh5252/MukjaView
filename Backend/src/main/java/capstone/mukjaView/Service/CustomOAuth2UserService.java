@@ -32,7 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return null;
 
         //리소스 서버에서 발급받은 정보로 사용자를 특정할 아이디값을 만듬
-        String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
+        String username = oAuth2Response.getProvider() + oAuth2Response.getProviderId();
         User existData = userRepository.findByUsername(username);
         if (existData == null) {
             User user = new User();
