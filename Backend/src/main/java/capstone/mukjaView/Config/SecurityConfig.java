@@ -81,7 +81,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/api/swagger-ui/**").permitAll()
+                        .requestMatchers("/", "/swagger-ui/**").permitAll()
                         .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
