@@ -1,0 +1,44 @@
+name: CI/CD_front
+
+on:
+  push:
+    branches:
+      - seungJoo
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  CI-CD :
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: seungJoo
+      
+      - name: Docker Build & push to prod
+        run: |
+          cd Frontend
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/nginx-prod:${GITHUB_SHA::7} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/nginx-prod
+
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@master
+        id: deploy-prod
+        with:
+          host: ${{ secrets.HOST_PROD }}
+          username: dh5277
+          key: ${{ secrets.PRIVATE_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            cd capstone
+            git checkout main
+            sudo docker ps
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/nginx-prod
+            sudo docker-compose up -d --force-recreate nginx
+            sudo docker image prune -f
+
