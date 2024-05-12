@@ -35,7 +35,7 @@ public class LoginController {
     }
 
     @PostMapping("/api/v1/users/{name}/nickname")
-    @Operation(summary = "update nickname, neutral picture, mukbti")
+    @Operation(summary = "update user nickname")
     public ResponseEntity<String> updateUserNickName(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
@@ -49,6 +49,12 @@ public class LoginController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
     }
+
+//    @PostMapping("/api/v1/users/{name}/mukbti")
+//    @Operation(summary = "update user mukbti")
+//    public ResponseEntity<String> updateUserMukbti(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
+//
+//    }
 
 }
 
