@@ -134,8 +134,8 @@ def upload_image():
     service_choices = ['0', '14', '15']
     expression_image_paths = [
     os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_laugh.png"),
-    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cool.jpg"),
-    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_sad.jpg")
+    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cool.png"),
+    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_sad.png")
     ]
 
     # 표정 변화 처리 함수 호출
