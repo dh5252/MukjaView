@@ -1,4 +1,4 @@
-name: CI/CD_api_server
+name: CI/CD_back
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
         run: |
           mkdir ./Backend/src/main/resources
           cd ./Backend/src/main/resources
-          echo "${{ secrets.API_PROPERTIES }}" > application.properties
+          echo "${{ secrets.PROPERTIES }}" > application.properties
         shell: bash
       
       - name: Build with Gradle
@@ -49,8 +49,8 @@ jobs:
         run: |
           cd Backend
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api_test:${GITHUB_SHA::7} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/api_test:${GITHUB_SHA::7}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/spring-prod:${GITHUB_SHA::7}
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
         id: deploy-prod
@@ -64,8 +64,8 @@ jobs:
             cd capstone
             git checkout main
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/api_test:$SHORT_SHA
-            sudo docker stop api_test
-            sudo docker rm api_test
-            sudo docker run -d --name api_test --network nginx_network -p 8081:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/api_test:$SHORT_SHA
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
+            sudo docker stop spring
+            sudo docker rm spring
+            sudo docker run -d --name spring --network nginx_network -p 8080:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/spring-prod:$SHORT_SHA
             sudo docker image prune -af
