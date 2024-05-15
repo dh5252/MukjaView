@@ -67,5 +67,5 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/api_test:$SHORT_SHA
             sudo docker stop api_test
             sudo docker rm api_test
-            sudo docker run -d --name api_test --network nginx_network -p 8081:8080 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/api_test:$SHORT_SHA
+            sudo docker run -d --name api_test --network nginx_network -p 8081:8081 -v ~/nginx_data/certs:/opt/ssl ${{ secrets.DOCKER_USERNAME }}/api_test:$SHORT_SHA
             sudo docker image prune -af
