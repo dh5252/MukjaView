@@ -53,6 +53,8 @@ public class SecurityConfig {
 //                        return configuration;
 //                    }
 //                }));
+        System.out.println("security Config");
+
         http
                 .cors(cors -> {
                     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
