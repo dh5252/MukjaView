@@ -4,6 +4,7 @@ import capstone.mukjaView.Dto.CustomOAuth2User;
 import capstone.mukjaView.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,16 +15,18 @@ import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("${api.base.url}")
 public class LoginController {
 
     private final UserService userService;
 
-    @GetMapping("/api/v1/login/google")
+
+    @GetMapping("/v1/login/google")
     @Operation(summary = "google login link")
     public String googleHyperlinkAPI() {
         return "/oauth2/authorization/google";
     }
-    @GetMapping("/api/v1/user/name")
+    @GetMapping("/v1/user/name")
     public ResponseEntity<String> returnUserName() {
         System.out.println("controller ok");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -35,7 +38,7 @@ public class LoginController {
         return new ResponseEntity<>("Not login", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/api/v1/users/{name}/nickname")
+    @PostMapping("/v1/users/{name}/nickname")
     @Operation(summary = "update user nickname")
     public ResponseEntity<String> updateUserNickName(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
