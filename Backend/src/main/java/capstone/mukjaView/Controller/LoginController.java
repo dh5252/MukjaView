@@ -25,6 +25,7 @@ public class LoginController {
     }
     @GetMapping("/api/v1/user/name")
     public ResponseEntity<String> returnUserName() {
+        System.out.println("controller ok");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
