@@ -5,6 +5,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 from dotenv import load_dotenv
+import tempfile
 
 # .env 파일 로드
 load_dotenv()
@@ -14,8 +15,8 @@ ailabapi_api_key = os.getenv('AILABAPI_API_KEY')
 
 app = Flask(__name__)
 
-# 업로드된 이미지를 저장할 디렉토리
-UPLOAD_FOLDER = 'uploads'
+# 임시 디렉토리를 생성하고 설정합니다.
+UPLOAD_FOLDER = tempfile.mkdtemp()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 배경 제거 API 호출 함수
@@ -63,7 +64,7 @@ def process_image_with_animation(image_path, save_path):
         if image_response.status_code == 200:
             image = Image.open(BytesIO(image_response.content))
             image.save(save_path)
-            print("카툰화 이미지를 성공적으로 저장되었습니다.")
+            print("카툰화 이미지가 성공적으로 저장되었습니다.")
         else:
             print("카툰화 이미지를 다운로드하는 데 실패했습니다. 상태 코드:", image_response.status_code)
     else:
@@ -99,6 +100,15 @@ def process_expression_change_api(input_image_path, output_image_paths, service_
             else:
                 print(f"{i+1}번째 표정변화 API 호출에 실패했습니다. 상태 코드:", response.status_code)
 
+# 배경 제거 함수 호출 후에 임시 저장소에 저장된 이미지 경로 반환
+def process_background_removed_images(expression_image_paths):
+    background_removed_paths = []
+    for expression_image_path in expression_image_paths:
+        background_removed_path = os.path.join(app.config['UPLOAD_FOLDER'], f"background_removed_{os.path.basename(expression_image_path)}")
+        background_remove_image(expression_image_path, background_removed_path)
+        background_removed_paths.append(background_removed_path)
+    return background_removed_paths
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -108,38 +118,45 @@ def upload_image():
     # 사용자가 업로드한 이미지를 받아오기
     uploaded_image = request.files['image']
 
-    # 이미지를 업로드할 디렉토리가 없다면 생성
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
-
     # 이미지를 업로드할 경로를 설정
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_image.filename)
 
-    # 이미지를 저장
+    # 이미지를 저장하지 않고 바로 임시 파일에 저장
     uploaded_image.save(image_path)
 
-    # 배경 제거된 이미지를 저장할 경로 설정
-    background_image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_background.png")
-
-    # 배경 제거 함수 호출
-    background_remove_image(image_path, background_image_path)
-
-    # 카툰화된 이미지를 저장할 경로 설정
+    # 카툰화된 이미지를 저장할 임시 경로 설정
     cartoon_image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cartoon.png")
 
     # 카툰화 함수 호출
-    process_image_with_animation(background_image_path, cartoon_image_path)
+    process_image_with_animation(image_path, cartoon_image_path)
 
     # 표정 변화 처리 API 호출을 위한 설정
     service_choices = ['0', '14', '15']
     expression_image_paths = [
-    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_laugh.png"),
-    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cool.png"),
-    os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_sad.png")
+        os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_laugh.png"),
+        os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cool.png"),
+        os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_sad.png")
     ]
 
     # 표정 변화 처리 함수 호출
     process_expression_change_api(cartoon_image_path, expression_image_paths, service_choices)
+
+    # 배경 제거 함수 호출 후에 임시 저장소에 저장된 이미지 경로 반환
+    background_removed_paths = process_background_removed_images(expression_image_paths)
+
+    # 이미지를 바이트로 변환하여 텍스트 파일에 저장
+    with open('images_as_bytes.txt', 'wb') as f:
+        for path in background_removed_paths:
+            with open(path, 'rb') as image_file:
+                f.write(image_file.read())
+                f.write(b'\n')  # 이미지 간 구분을 위한 줄 바꿈 추가
+
+    # 처리가 끝난 후 임시 파일 삭제
+    os.remove(image_path)
+    os.remove(cartoon_image_path)
+
+    for path in background_removed_paths:
+        print("배경 제거된 이미지 경로:", path)
 
     # 업로드 페이지로 리다이렉트
     return redirect(url_for('index'))
