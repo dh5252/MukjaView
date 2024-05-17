@@ -53,7 +53,6 @@ public class SecurityConfig {
 //                        return configuration;
 //                    }
 //                }));
-        System.out.println("security Config");
 
         http
                 .cors(cors -> {
@@ -79,9 +78,6 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
 
         //JWTFilter 추가
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
         http
                 .addFilterAfter(new JWTFilter(jwtUtil), OAuth2LoginAuthenticationFilter.class);
 
