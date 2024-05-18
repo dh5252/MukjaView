@@ -2,6 +2,7 @@ package capstone.mukjaView.Config;
 
 import capstone.mukjaView.Jwt.JWTFilter;
 import capstone.mukjaView.Jwt.JWTUtil;
+import capstone.mukjaView.Oauth2.CustomAuthorizationRequestRepository;
 import capstone.mukjaView.Oauth2.CustomSuccessHandler;
 import capstone.mukjaView.Service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,7 +14,9 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -30,29 +33,9 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
-    @Value("${is.local}")
-    private boolean isLocal;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-//        http
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//
-//                        CorsConfiguration configuration = new CorsConfiguration();
-//
-//                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://mukjaview.kro.kr"));
-//                        configuration.setAllowedMethods(Collections.singletonList("*"));
-//                        configuration.setAllowCredentials(true);
-//                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-//                        configuration.setMaxAge(3600L);
-//                        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-//
-//                        return configuration;
-//                    }
-//                }));
 
         http
                 .cors(cors -> {
@@ -83,6 +66,11 @@ public class SecurityConfig {
 
         http
                     .oauth2Login((oauth2) -> oauth2
+                            .authorizationEndpoint(authorizationEndpoint ->
+                                authorizationEndpoint
+                                        .baseUri("/oauth/authorization")
+                                        .authorizationRequestRepository(authorizationRequestRepository())
+                            )
                             .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                     .userService(customOAuth2UserService))
                             .successHandler(customSuccessHandler)
@@ -99,5 +87,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
+    }
+
+    @Bean
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+        return new CustomAuthorizationRequestRepository();
     }
 }

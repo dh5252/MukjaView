@@ -15,18 +15,16 @@ import java.util.HashMap;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${api.base.url}")
 public class LoginController {
 
     private final UserService userService;
 
-
-    @GetMapping("/v1/login/google")
+    @GetMapping("api/v1/login/google")
     @Operation(summary = "google login link")
     public String googleHyperlinkAPI() {
         return "/oauth2/authorization/google";
     }
-    @GetMapping("/v1/user/name")
+    @GetMapping("api/v1/user/name")
     public ResponseEntity<String> returnUserName() {
         System.out.println("controller ok");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -38,7 +36,7 @@ public class LoginController {
         return new ResponseEntity<>("Not login", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/v1/users/{name}/nickname")
+    @PostMapping("api/v1/users/{name}/nickname")
     @Operation(summary = "update user nickname")
     public ResponseEntity<String> updateUserNickName(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

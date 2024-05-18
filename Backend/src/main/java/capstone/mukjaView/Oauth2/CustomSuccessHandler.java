@@ -22,8 +22,6 @@ import java.util.Iterator;
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JWTUtil jwtUtil;
 
-    @Value("${login.successs.redirect_url}")
-    private String redirect;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
@@ -42,7 +40,15 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("Authorization", token));
         String cookieHeader = String.format("Authorization=%s; Path=/; HttpOnly; SameSite=None; Secure", token);
         response.addHeader("Set-Cookie", cookieHeader);
-        response.sendRedirect(redirect);
+
+        String redirectUri = (String) request.getSession().getAttribute("redirect_uri");
+
+        if (redirectUri != null) {
+            request.getSession().removeAttribute("redirect_uri");
+            response.sendRedirect(redirectUri);
+        } else {
+            response.sendRedirect("/");
+        }
     }
 
     private Cookie createCookie(String key, String value) {
