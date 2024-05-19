@@ -68,7 +68,7 @@ public class SecurityConfig {
                     .oauth2Login((oauth2) -> oauth2
                             .authorizationEndpoint(authorizationEndpoint ->
                                 authorizationEndpoint
-                                        .baseUri("/oauth/authorization")
+                                        .baseUri("/oauth2/authorization")
                                         .authorizationRequestRepository(authorizationRequestRepository())
                             )
                             .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
