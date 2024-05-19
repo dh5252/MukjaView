@@ -20,4 +20,14 @@ public class UserService {
         return 1;
     }
 
+    public int updateMukbti(String name, String mukbti) {
+        User user = userRepository.findByUsername(name);
+        if (user != null) {
+            user.setMukbti(mukbti);
+            userRepository.save(user);
+            return 0;
+        }
+        return 1;
+    }
+
 }

@@ -19,11 +19,6 @@ public class LoginController {
 
     private final UserService userService;
 
-    @GetMapping("api/v1/login/google")
-    @Operation(summary = "google login link")
-    public String googleHyperlinkAPI() {
-        return "/oauth2/authorization/google";
-    }
     @GetMapping("api/v1/user/name")
     public ResponseEntity<String> returnUserName() {
         System.out.println("controller ok");
@@ -43,7 +38,7 @@ public class LoginController {
         if (auth != null && auth.isAuthenticated()) {
             CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
             String username = oAuth2User.getUsername();
-            if (name != username)
+            if (!name.equals(username))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is invalid: hack!");
             String nickname = (String)body.get("nickname");
             if (userService.updateNickname(name, nickname) == 0)
@@ -52,11 +47,22 @@ public class LoginController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
     }
 
-//    @PostMapping("/api/v1/users/{name}/mukbti")
-//    @Operation(summary = "update user mukbti")
-//    public ResponseEntity<String> updateUserMukbti(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
-//
-//    }
+    @PostMapping("/api/v1/users/{name}/mukbti")
+    @Operation(summary = "update user mukbti")
+    public ResponseEntity<String> updateUserMukbti(@PathVariable String name, @RequestBody HashMap<String, Object> body) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
+            String username = oAuth2User.getUsername();
+            if (!name.equals(username))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is invalid: hack!");
+            String mukbti = (String)body.get("mukbti");
+            if (userService.updateMukbti(name, mukbti) == 0)
+                return ResponseEntity.noContent().build(); // 성공
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+    }
 
 }
+
 
