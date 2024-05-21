@@ -1,10 +1,10 @@
 package capstone.mukjaView.Domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +43,12 @@ public class User {
 
     @Column
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserLikeRestaurant> likeRestaurants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 
     public User() {
         init = false;
