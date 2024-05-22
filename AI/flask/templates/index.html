@@ -2,19 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload</title>
+    <title>Image Upload and Process</title>
 </head>
 <body>
-    <h1>Upload Image</h1>
-    <form action="{{ url_for('upload_image') }}" method="post" enctype="multipart/form-data">
+    <h1>Upload an Image</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" name="image" accept="image/*" required>
         <button type="submit">Upload</button>
     </form>
-
-    {% if result_image_path %}
-    <h2>Result Image</h2>
-    <img src="{{ result_image_path }}" alt="Result Image">
-    {% endif %}
+    <div id="result">
+        <h2>Processed Images</h2>
+        <div id="images"></div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            if (response.ok) {
+                const imageUrls = await response.json();
+                const imagesDiv = document.getElementById('images');
+                imagesDiv.innerHTML = '';
+                imageUrls.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.style.maxWidth = '200px';
+                    img.style.margin = '10px';
+                    imagesDiv.appendChild(img);
+                });
+            } else {
+                alert('Image processing failed.');
+            }
+        }
+    </script>
 </body>
 </html>

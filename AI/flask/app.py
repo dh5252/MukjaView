@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import os
 import requests
 from PIL import Image
@@ -20,7 +20,10 @@ app = Flask(__name__)
 
 # 임시 디렉토리 생성/ 설정
 UPLOAD_FOLDER = tempfile.mkdtemp()
+OUTPUT_FOLDER = 'static/output'  # 이미지 파일을 저장할 폴더
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['OUTPUT_FOLDER'] = OUTPUT_FOLDER
 
 # ThreadPoolExecutor 생성
 executor = ThreadPoolExecutor(max_workers=10)
@@ -43,7 +46,7 @@ def background_remove_image(image_path, save_path):
             image = Image.open(BytesIO(image_response.content))
             image = image.convert('RGB')  # JPEG 형식은 RGB여야 합니다.
             image.save(save_path, format='JPEG')
-            print("배경이 성공적으로 제거되었습니다.")
+            print(f"배경이 성공적으로 제거되었습니다: {save_path}")
             return save_path  # 성공적으로 저장된 경로 반환
         else:
             print("배경 제거 이미지를 다운로드하는 데 실패했습니다. 상태 코드:", image_response.status_code)
@@ -70,7 +73,7 @@ def process_image_with_animation(image_path, save_path):
             image = Image.open(BytesIO(image_response.content))
             image = image.convert('RGB')  # JPEG 형식은 RGB여야 합니다.
             image.save(save_path, format='JPEG')
-            print("카툰화 이미지가 성공적으로 저장되었습니다.")
+            print(f"카툰화 이미지가 성공적으로 저장되었습니다: {save_path}")
             return save_path  # 성공적으로 저장된 경로 반환
         else:
             print("카툰화 이미지를 다운로드하는 데 실패했습니다. 상태 코드:", image_response.status_code)
@@ -99,7 +102,7 @@ def process_expression_change_api(input_image_path, output_image_paths, service_
                 image = Image.open(BytesIO(decoded_image))
                 image = image.convert('RGB')  # JPEG 형식은 RGB여야 함 !!
                 image.save(output_image_path, format='JPEG')
-                print(f"{service_choice}번 표정변화 이미지가 성공적으로 저장되었습니다.")
+                print(f"{service_choice}번 표정변화 이미지가 성공적으로 저장되었습니다: {output_image_path}")
                 return output_image_path  # 성공적으로 저장된 경로 반환
             else:
                 print(f"{service_choice}번 표정변화 API 응답에서 이미지 데이터를 찾을 수 없습니다.")
@@ -112,7 +115,7 @@ def process_expression_change_api(input_image_path, output_image_paths, service_
     output_paths = [future.result() for future in futures]
     return output_paths
 
-# 배경 제거 함수 호출 후에 임시 저장소에 저장된 이미지 경로 반환
+# 배경 제거 함수 정의
 def process_background_removed_images(expression_image_paths, service_choices):
     futures = []
     background_removed_paths = []
@@ -124,6 +127,7 @@ def process_background_removed_images(expression_image_paths, service_choices):
     background_removed_paths = [(sc, future.result()) for (sc, future) in zip(service_choices, futures)]
     return background_removed_paths
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -133,6 +137,7 @@ def upload_image():
     uploaded_image = request.files['image']
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}.jpg")
     uploaded_image.save(image_path)
+    print(f"업로드된 이미지 경로: {image_path}")
 
     cartoon_image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{os.path.splitext(uploaded_image.filename)[0]}_cartoon.jpg")
     cartoon_image_path = process_image_with_animation(image_path, cartoon_image_path)
@@ -154,17 +159,23 @@ def upload_image():
     if any(path is None for _, path in background_removed_paths):
         return "배경 제거 처리에 실패했습니다.", 500
 
+    output_image_paths = []
     for service_choice, path in background_removed_paths:
-        with open(f'background_removed_{service_choice}.txt', 'wb') as f:
-            with open(path, 'rb') as image_file:
-                f.write(image_file.read())
+        if os.path.exists(path):  # 파일이 존재하는지 확인
+            output_image_path = os.path.join(app.config['OUTPUT_FOLDER'], f"final_{service_choice}.jpg")
+            os.rename(path, output_image_path)
+            print(f"파일이 이동되었습니다: {path} -> {output_image_path}")
+            output_image_paths.append(url_for('static', filename=f'output/final_{service_choice}.jpg', _external=True))
+        else:
+            print(f"파일이 존재하지 않습니다: {path}")
 
     os.remove(image_path)
     os.remove(cartoon_image_path)
-    for _, path in background_removed_paths:
-        os.remove(path)
+    for path in expression_image_paths:
+        if os.path.exists(path):
+            os.remove(path)
 
-    return redirect(url_for('index'))
+    return jsonify(output_image_paths)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=True)
