@@ -17,6 +17,9 @@ public class Restaurant {
     private Long restaurantId;
 
     @Column
+    private String address;
+
+    @Column
     private String restaurantName;
 
     @Column
@@ -48,4 +51,7 @@ public class Restaurant {
 
     @OneToMany(mappedBy = "restaurant")
     private List<CharacterReview> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "restaurant")
+    private List<RestaurantTag> tags = new ArrayList<>();
 }
