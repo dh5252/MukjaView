@@ -2,6 +2,7 @@ package capstone.mukjaView.Service;
 
 import capstone.mukjaView.Domain.User;
 import capstone.mukjaView.Dto.UserInfoDTO;
+import capstone.mukjaView.Dto.UserInfoRequestDTO;
 import capstone.mukjaView.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,21 @@ public class UserService {
         User user = userRepository.findByUsername(name);
         if (user != null) {
             user.setInit(true);
+            userRepository.save(user);
+            return 0;
+        }
+        return 1;
+    }
+    @Transactional
+    public int patchUserInfo(String name, UserInfoRequestDTO userInfoRequestDTO) {
+        User user = userRepository.findByUsername(name);
+        if (user != null) {
+            user.setMukbti(userInfoRequestDTO.getMukbti());
+            user.setNickName(userInfoRequestDTO.getNickname());
+            user.setNeutralPicture(userInfoRequestDTO.getNeutralPictureUrl());
+            user.setSmilePicture(userInfoRequestDTO.getSmilePictureUrl());
+            user.setSadPicture(userInfoRequestDTO.getSadPictureUrl());
+            user.setInit(userInfoRequestDTO.isInit());
             userRepository.save(user);
             return 0;
         }

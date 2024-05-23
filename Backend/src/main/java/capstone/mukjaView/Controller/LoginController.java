@@ -2,6 +2,7 @@ package capstone.mukjaView.Controller;
 
 import capstone.mukjaView.Dto.CustomOAuth2User;
 import capstone.mukjaView.Dto.UserInfoDTO;
+import capstone.mukjaView.Dto.UserInfoRequestDTO;
 import capstone.mukjaView.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +88,21 @@ public class LoginController {
             if (!name.equals(username))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is invalid: hack!");
             if (userService.patchUserInit(username) == 0)
+                return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+    }
+
+    @PatchMapping("/api/v1/users/{name}/info")
+    @Operation(summary = "update user info")
+    public ResponseEntity<String> updateUserInfo(@PathVariable String name, @RequestBody UserInfoRequestDTO userInfoRequestDTO) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
+            String username = oAuth2User.getUsername();
+            if (!name.equals(username))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is invalid: hack!");
+            if (userService.patchUserInfo(username, userInfoRequestDTO) == 0)
                 return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
