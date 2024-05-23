@@ -2,40 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Image Upload and Process</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
 </head>
 <body>
-    <h1>Upload an Image</h1>
+    <h1>Upload Image</h1>
     <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required>
-        <button type="submit">Upload</button>
+        <input type="file" name="image" id="image" required>
+        <button type="button" onclick="uploadImage()">Upload</button>
     </form>
-    <div id="result">
-        <h2>Processed Images</h2>
-        <div id="images"></div>
-    </div>
+    <div id="response"></div>
+
     <script>
-        document.getElementById('uploadForm').onsubmit = async function(event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-            if (response.ok) {
-                const imageUrls = await response.json();
-                const imagesDiv = document.getElementById('images');
-                imagesDiv.innerHTML = '';
-                imageUrls.forEach(url => {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.style.maxWidth = '200px';
-                    img.style.margin = '10px';
-                    imagesDiv.appendChild(img);
-                });
-            } else {
-                alert('Image processing failed.');
-            }
+        const domainName = "{{ domain_name }}";
+
+        function uploadImage() {
+            var formData = new FormData(document.getElementById('uploadForm'));
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', domainName + '/upload', true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var responseDiv = document.getElementById('response');
+                    responseDiv.innerHTML = 'Response: ' + xhr.responseText;
+                    response.forEach(function(path) {
+                        var img = document.createElement('img');
+                        img.src = path;
+                        img.alt = "Processed Image";
+                        img.style = "margin: 10px; max-width: 200px; border: 1px solid #ccc;";
+                        responseDiv.appendChild(img);
+                    });
+                }
+            };
+            xhr.send(formData);
         }
     </script>
 </body>

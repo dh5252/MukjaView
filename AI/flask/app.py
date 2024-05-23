@@ -11,10 +11,15 @@ import shutil
 # .env 파일 로드
 load_dotenv()
 
-# API 키 가져오기
+# API 키와 도메인 가져오기
 ailabapi_api_key = os.getenv('AILABAPI_API_KEY')
+domain_name = os.getenv('DOMAIN_NAME')
+
 if not ailabapi_api_key:
     raise ValueError("API 키가 없습니다. .env 파일을 확인하고 'AILABAPI_API_KEY'가 설정되어 있는지 확인하세요.")
+
+if not domain_name:
+    raise ValueError("도메인 이름이 없습니다. .env 파일을 확인하고 'DOMAIN_NAME'이 설정되어 있는지 확인하세요.")
 
 app = Flask(__name__)
 
@@ -117,7 +122,7 @@ def process_expression_change(image_path, save_path, service_choice):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', domain_name=domain_name)
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
@@ -162,7 +167,7 @@ def upload_image():
             output_image_path = os.path.join(app.config['OUTPUT_FOLDER'], output_image_filename)
             shutil.move(path, output_image_path)
             print(f"파일이 이동되었습니다: {path} -> {output_image_path}")
-            output_image_paths.append(url_for('static', filename=f'output/{output_image_filename}', _external=True))
+            output_image_paths.append(f"{domain_name}/static/output/{output_image_filename}")
         else:
             print(f"파일이 존재하지 않습니다: {path}")
 
