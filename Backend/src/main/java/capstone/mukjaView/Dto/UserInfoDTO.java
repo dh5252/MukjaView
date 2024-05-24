@@ -14,6 +14,7 @@ public class UserInfoDTO {
     private String neutralImageUrl;
     private String smileImageUrl;
     private String sadImageUrl;
+    private String mukbti;
     private boolean init;
 
     public UserInfoDTO(User user) {
@@ -25,5 +26,6 @@ public class UserInfoDTO {
         this.smileImageUrl = user.getSmilePicture();
         this.sadImageUrl = user.getSadPicture();
         this.init = user.isInit();
+        this.mukbti = user.getMukbti();
     }
 }

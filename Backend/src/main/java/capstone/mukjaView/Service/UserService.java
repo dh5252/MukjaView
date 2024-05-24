@@ -44,10 +44,10 @@ public class UserService {
     }
 
     @Transactional
-    public int patchUserInit(String name) {
+    public int patchUserInitToFalse(String name) {
         User user = userRepository.findByUsername(name);
         if (user != null) {
-            user.setInit(true);
+            user.setInit(false);
             userRepository.save(user);
             return 0;
         }

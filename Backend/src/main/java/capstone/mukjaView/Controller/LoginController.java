@@ -79,7 +79,7 @@ public class LoginController {
     }
 
     @PatchMapping("/api/v1/users/{name}/init")
-    @Operation(summary = "update user status init (false >> true)")
+    @Operation(summary = "update user status init (true >> false)")
     public ResponseEntity<String> updateUserInit(@PathVariable String name) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.isAuthenticated()) {
@@ -87,7 +87,7 @@ public class LoginController {
             String username = oAuth2User.getUsername();
             if (!name.equals(username))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("username is invalid: hack!");
-            if (userService.patchUserInit(username) == 0)
+            if (userService.patchUserInitToFalse(username) == 0)
                 return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
