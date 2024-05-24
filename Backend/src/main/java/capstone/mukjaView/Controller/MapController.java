@@ -6,6 +6,7 @@ import capstone.mukjaView.Dto.CustomOAuth2User;
 import capstone.mukjaView.Dto.MapPageRestaurantResponse;
 import capstone.mukjaView.Service.MapService;
 import capstone.mukjaView.Service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ public class MapController {
     private final UserService userService;
 
     @GetMapping("/api/v1/restaurants/by-coordinates")
+    @Operation(summary = "find Restaurants by coordinates and page(default 0)")
     public ResponseEntity<List<MapPageRestaurantResponse>> returnRestaurantsInMap(
             @RequestParam double min_lat,
             @RequestParam double max_lat,
