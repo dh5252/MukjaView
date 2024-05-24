@@ -29,7 +29,7 @@ public class LoginController {
             String username = oAuth2User.getUsername();
             return new ResponseEntity<>(username, HttpStatus.OK);
         }
-        return new ResponseEntity<>("Not login", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("Not login", HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/api/v1/user/info")
@@ -43,7 +43,7 @@ public class LoginController {
                 return new ResponseEntity<>(rtn, HttpStatus.OK);
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("api/v1/users/{name}/nickname")
@@ -59,7 +59,7 @@ public class LoginController {
             if (userService.updateNickname(name, nickname) == 0)
                 return ResponseEntity.noContent().build(); // 성공
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("jwt is invalid");
     }
 
     @PostMapping("/api/v1/users/{name}/mukbti")
@@ -75,7 +75,7 @@ public class LoginController {
             if (userService.updateMukbti(name, mukbti) == 0)
                 return ResponseEntity.noContent().build(); // 성공
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("jwt is invalid");
     }
 
     @PatchMapping("/api/v1/users/{name}/init")
@@ -90,7 +90,7 @@ public class LoginController {
             if (userService.patchUserInitToFalse(username) == 0)
                 return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("jwt is invalid");
     }
 
     @PatchMapping("/api/v1/users/{name}/info")
@@ -105,7 +105,7 @@ public class LoginController {
             if (userService.patchUserInfo(username, userInfoRequestDTO) == 0)
                 return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("jwt is invalid");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("jwt is invalid");
     }
 
 }

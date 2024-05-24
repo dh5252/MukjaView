@@ -36,6 +36,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public User getUser(String userName) {
+        User user = userRepository.findByUsername(userName);
+        if (user != null)
+            return user;
+        return null;
+    }
+
+    @Transactional(readOnly = true)
     public UserInfoDTO returnUserInfo(String userName) {
         User user = userRepository.findByUsername(userName);
         if (user != null)

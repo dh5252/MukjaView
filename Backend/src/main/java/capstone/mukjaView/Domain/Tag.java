@@ -18,4 +18,9 @@ public class Tag {
 
     @OneToMany(mappedBy = "tag")
     private List<RestaurantTag> restaurantTags = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return tagName;
+    }
 }
