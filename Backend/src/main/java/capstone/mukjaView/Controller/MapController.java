@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ public class MapController {
 
     private final MapService mapService;
     private final UserService userService;
-
     @GetMapping("/api/v1/restaurants/by-coordinates")
     @Operation(summary = "find Restaurants by coordinates and page(default 0)")
     public ResponseEntity<List<MapPageRestaurantResponse>> returnRestaurantsInMap(
@@ -51,9 +49,7 @@ public class MapController {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
 
         try {
-            Page<Restaurant> pageRestaurants = mapService.getRestaurantsBySize(page, min_lat, max_lat, min_long, max_long);
-            if (pageRestaurants.isEmpty())
-                return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+            Page<Restaurant> pageRestaurants = mapService.getRestaurantsBySizeAndPage(page, min_lat, max_lat, min_long, max_long);
             List<Restaurant> restaurants = pageRestaurants.getContent();
             List<MapPageRestaurantResponse> rtn = restaurants.stream()
                     .map(o -> new MapPageRestaurantResponse(o, user))
@@ -64,7 +60,64 @@ public class MapController {
         }
     }
 
-    // 태그 검색
+    @GetMapping("/api/v1/restaurants/by-tag")
+    @Operation(summary = "find Restaurants by tag and page")
+    public ResponseEntity<List<MapPageRestaurantResponse>> returnRestaurantByTag(
+            @RequestParam String tag,
+            @RequestParam(defaultValue = "0") int page) {
 
-    // 식당명 검색
+        String username;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
+            username = oAuth2User.getUsername();
+        }
+        else
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        User user = userService.getUser(username);
+        if (user == null)
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+
+        try {
+            List<Restaurant> restaurants = mapService.getRestaurantsByTagAndPage(page, tag);
+            List<MapPageRestaurantResponse> rtn = restaurants.stream()
+                    .map(o -> new MapPageRestaurantResponse(o, user))
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(rtn, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/api/v1/restaurants/by-keyword")
+    @Operation(summary = "find Restaurants by restaurant name and page. If restaurant's name contains keyword, this api returns restaurant.")
+    public  ResponseEntity<List<MapPageRestaurantResponse>> returnRestaurantsByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page) {
+
+        String username;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated()) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
+            username = oAuth2User.getUsername();
+        }
+        else
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+
+        User user = userService.getUser(username);
+        if (user == null)
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+
+        try {
+            List<Restaurant> restaurants = mapService.getRestaurantsByNameAndPage(page, name);
+            List<MapPageRestaurantResponse> rtn = restaurants.stream()
+                    .map(o -> new MapPageRestaurantResponse(o, user))
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(rtn, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
