@@ -14,6 +14,8 @@ public class CharacterReview {
 
     private String characterName;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String review;
 
     @ManyToOne

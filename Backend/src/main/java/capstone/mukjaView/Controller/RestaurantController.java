@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class RestaurantController {
-    private final UserService userService;
     private final RestaurantService restaurantService;
 
     @GetMapping("/api/v1/restaurant/{restaurantId}/info")
