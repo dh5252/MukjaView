@@ -1,10 +1,12 @@
 package capstone.mukjaView.Service;
 
 
+import capstone.mukjaView.Domain.CharacterReview;
 import capstone.mukjaView.Domain.Restaurant;
 import capstone.mukjaView.Domain.User;
 import capstone.mukjaView.Domain.UserLikeRestaurant;
 import capstone.mukjaView.Dto.ReviewPageResponse;
+import capstone.mukjaView.Repository.CharacterReviewRepository;
 import capstone.mukjaView.Repository.RestaurantRepository;
 import capstone.mukjaView.Repository.UserLikeRestaurantRepository;
 import capstone.mukjaView.Repository.UserRepository;
@@ -23,6 +25,7 @@ public class RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
+    private final CharacterReviewRepository characterReviewRepository;
 
     @Transactional(readOnly = true)
     public ReviewPageResponse returnReviewPageResponse(Long restaurantId, String oauthIdentifier) {
@@ -47,7 +50,13 @@ public class RestaurantService {
         return rtn;
     }
 
-
+    @Transactional(readOnly = true)
+    public String returnReviewByMukbti(Long restaurantId, String mukbti) {
+        CharacterReview characterReview = characterReviewRepository.findByRestaurantRestaurantIdAndCharacterName(restaurantId, mukbti);
+        if (characterReview == null)
+            return null;
+        return characterReview.getReview();
+    }
 
     static public String calculateEmotion(Restaurant restaurant, User user) {
         String mbti = user.getMukbti();

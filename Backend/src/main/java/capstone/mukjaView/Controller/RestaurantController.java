@@ -41,4 +41,22 @@ public class RestaurantController {
         ReviewPageResponse rtn = restaurantService.returnReviewPageResponse(restaurantId, username);
         return new ResponseEntity<>(rtn, HttpStatus.OK);
     }
+
+    @GetMapping("/api/v1/restaurant/{restaurantId}/review")
+    @Operation(summary = "get one restaurant review by mukbti")
+    public ResponseEntity<String> returnReviewByMukbti(
+            @PathVariable Long restaurantId,
+            @RequestParam String mukbti
+    ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username;
+        if (auth != null && auth.isAuthenticated()) {
+            CustomOAuth2User oAuth2User = (CustomOAuth2User) auth.getPrincipal();
+            username = oAuth2User.getUsername();
+        }
+        else
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        String rtn = restaurantService.returnReviewByMukbti(restaurantId, mukbti);
+        return new ResponseEntity<>(rtn, HttpStatus.OK);
+    }
 }
