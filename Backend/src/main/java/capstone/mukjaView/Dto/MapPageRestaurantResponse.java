@@ -12,15 +12,18 @@ import java.util.stream.Collectors;
 @Setter
 public class MapPageRestaurantResponse {
 
+    private Long restaurantId;
     private String restaurantName;
     private List<String> tags;
     private String address;
     private double latitude;
     private double longitude;
     private String thumbnailPictureUrl;
-    private String facePictureUrl;
+    private String emotion;
+
 
     public MapPageRestaurantResponse(Restaurant restaurant, User user) {
+        this.restaurantId = getRestaurantId();
         this.restaurantName = restaurant.getRestaurantName();
         this.address = restaurant.getAddress();
         this.latitude = restaurant.getLatitude();
@@ -30,6 +33,6 @@ public class MapPageRestaurantResponse {
                 .map(o -> o.getTag().toString())
                 .collect(Collectors.toList());
 
-        // face calculate
+        this.emotion = "neutral";
     }
 }
