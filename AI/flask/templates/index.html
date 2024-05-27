@@ -4,38 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Upload</title>
-</head>
-<body>
-    <h1>Upload Image</h1>
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" name="image" id="image" required>
-        <button type="button" onclick="uploadImage()">Upload</button>
-    </form>
-    <div id="response"></div>
-
     <script>
-        const domainName = "{{ domain_name }}";
+        function handleUpload() {
+            const fileInput = document.getElementById('imageInput');
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
 
-        function uploadImage() {
-            var formData = new FormData(document.getElementById('uploadForm'));
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', domainName + '/upload', true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    var responseDiv = document.getElementById('response');
-                    responseDiv.innerHTML = 'Response: ' + xhr.responseText;
-                    response.forEach(function(path) {
-                        var img = document.createElement('img');
-                        img.src = path;
-                        img.alt = "Processed Image";
-                        img.style = "margin: 10px; max-width: 200px; border: 1px solid #ccc;";
-                        responseDiv.appendChild(img);
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const resultContainer = document.getElementById('result');
+                    resultContainer.innerHTML = '';
+                    data.forEach(url => {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        resultContainer.appendChild(img);
                     });
                 }
-            };
-            xhr.send(formData);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     </script>
+</head>
+<body>
+    <h1>Image Upload</h1>
+    <input type="file" id="imageInput">
+    <button onclick="handleUpload()">Upload Image</button>
+    <div id="result"></div>
 </body>
 </html>

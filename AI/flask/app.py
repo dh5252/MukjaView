@@ -7,6 +7,7 @@ import base64
 from dotenv import load_dotenv
 import tempfile
 import shutil
+import cv2
 
 # .env 파일 로드
 load_dotenv()
@@ -120,23 +121,49 @@ def process_expression_change(image_path, save_path, service_choice):
 
     return None  # 실패한 경우 None 반환
 
+
 @app.route('/')
 def index():
     return render_template('index.html', domain_name=domain_name)
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
-    uploaded_image = request.files['image']
+    uploaded_image = request.files.get('image')
+    if not uploaded_image:
+        return jsonify({"error": "No image uploaded"}), 400
+
     original_filename = os.path.splitext(uploaded_image.filename)[0]
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{original_filename}.jpg")
     uploaded_image.save(image_path)
     print(f"업로드된 이미지 경로: {image_path}")
 
+    # 이미지 읽기
+    image = cv2.imread(image_path)
+    if image is None:
+        return jsonify({"error": "Failed to read image"}), 400
+
+    # 얼굴 감지
+    cascade_face_detector = cv2.CascadeClassifier('../haarcascade_frontalface_default.xml')
+    face_detections = cascade_face_detector.detectMultiScale(image)
+    if len(face_detections) == 0:
+        return jsonify({"error": "셀카가 아닙니다"}), 400
+
+    # 이미지의 가로와 세로 길이 가져오기
+    height, width, _ = image.shape
+    new_size = min(height, width)
+
+    # 이미지의 더 짧은 쪽의 길이를 기준으로 정사각형 모양으로 만들기
+    image_resized = cv2.resize(image, (new_size, new_size))
+
+    # 임시 파일로 저장
+    resized_image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{original_filename}_resized.jpg")
+    cv2.imwrite(resized_image_path, image_resized)
+
     # 1. 카툰화
     cartoon_image_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{original_filename}_cartoon.jpg")
-    cartoon_image_path = process_image_with_animation(image_path, cartoon_image_path)
+    cartoon_image_path = process_image_with_animation(resized_image_path, cartoon_image_path)
     if not cartoon_image_path:
-        return "카툰화 처리에 실패했습니다.", 500
+        return jsonify({"error": "카툰화 처리에 실패했습니다."}), 500
 
     # 2. 표정 변화
     service_choices = ['0', '14', '15']
@@ -149,7 +176,7 @@ def upload_image():
     for service_choice, expression_image_path in zip(service_choices, expression_image_paths):
         expression_image_path = process_expression_change(cartoon_image_path, expression_image_path, service_choice)
         if not expression_image_path:
-            return "표정 변화 처리에 실패했습니다.", 500
+            return jsonify({"error": "표정 변화 처리에 실패했습니다."}), 500
 
     # 3. 배경 제거
     background_removed_paths = []
@@ -157,7 +184,7 @@ def upload_image():
         background_removed_path = expression_image_path.replace('.jpg', '_background_removed.jpg')
         background_removed_path = background_remove_image(expression_image_path, background_removed_path)
         if not background_removed_path:
-            return "배경 제거 처리에 실패했습니다.", 500
+            return jsonify({"error": "배경 제거 처리에 실패했습니다."}), 500
         background_removed_paths.append(background_removed_path)
 
     output_image_paths = []
@@ -176,6 +203,8 @@ def upload_image():
     for path in expression_image_paths:
         if os.path.exists(path):
             os.remove(path)
+    if os.path.exists(resized_image_path):
+        os.remove(resized_image_path)
 
     return jsonify(output_image_paths)
 
