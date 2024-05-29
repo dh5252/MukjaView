@@ -61,7 +61,7 @@ public class MapController {
             for (int i = 0 ; i < rtn.size() ; ++i)
                 rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
             if (is_sort)
-                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore));
+                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class MapController {
             for (int i = 0 ; i < rtn.size() ; ++i)
                 rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
             if (is_sort)
-                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore));
+                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
@@ -135,7 +135,7 @@ public class MapController {
             for (int i = 0 ; i < rtn.size() ; ++i)
                 rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
             if (is_sort)
-                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore));
+                rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
