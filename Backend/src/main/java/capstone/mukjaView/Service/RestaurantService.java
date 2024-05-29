@@ -39,7 +39,13 @@ public class RestaurantService {
         if (restaurant.isEmpty())
             return null;
         ReviewPageResponse rtn = new ReviewPageResponse(restaurant.get());
-        rtn.setEmotion(calculateEmotion(restaurant.get(), user));
+        double score = calculateEmotion(restaurant.get(), user);
+        if (score > 0)
+            rtn.setEmotion("positive");
+        else if (score < 0)
+            rtn.setEmotion("negative");
+        else
+            rtn.setEmotion("neutral");
         rtn.setFitMukbti(calculateMukbti(restaurant.get()));
         for (UserLikeRestaurant like : likes) {
             if (like.getRestaurant().getRestaurantId() == restaurantId) {
@@ -58,7 +64,8 @@ public class RestaurantService {
         return characterReview.getReview();
     }
 
-    static public String calculateEmotion(Restaurant restaurant, User user) {
+
+    public double calculateEmotion(Restaurant restaurant, User user) {
         String mbti = user.getMukbti();
 
         double value = 0;
@@ -75,14 +82,10 @@ public class RestaurantService {
         // 가성비 계산?
         // if (mbti.charAt(4) == 'R')
         // value += 2;
-        if (value > 0)
-            return "positive";
-        else if (value < 0)
-            return "negative";
-        return "neutral";
+        return value;
     }
 
-    static public String calculateMukbti(Restaurant restaurant) {
+    public String calculateMukbti(Restaurant restaurant) {
 
         double flavor = restaurant.getFlavorRatio();
         double service = restaurant.getServiceRatio();

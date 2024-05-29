@@ -2,7 +2,9 @@ package capstone.mukjaView.Dto;
 
 import capstone.mukjaView.Domain.Restaurant;
 import capstone.mukjaView.Domain.User;
+import capstone.mukjaView.Service.RestaurantService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class MapPageRestaurantResponse {
     private double longitude;
     private String thumbnailPictureUrl;
     private String emotion;
+    private double score;
 
 
     public MapPageRestaurantResponse(Restaurant restaurant, User user) {
@@ -32,7 +35,7 @@ public class MapPageRestaurantResponse {
         this.tags = restaurant.getTags().stream()
                 .map(o -> o.getTag().toString())
                 .collect(Collectors.toList());
-
+        this.score = 0;
         this.emotion = "neutral";
     }
 }
