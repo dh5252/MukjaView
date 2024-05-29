@@ -8,7 +8,6 @@ import capstone.mukjaView.Domain.UserLikeRestaurant;
 import capstone.mukjaView.Dto.ReviewPageResponse;
 import capstone.mukjaView.Repository.CharacterReviewRepository;
 import capstone.mukjaView.Repository.RestaurantRepository;
-import capstone.mukjaView.Repository.UserLikeRestaurantRepository;
 import capstone.mukjaView.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Service
@@ -39,7 +37,7 @@ public class RestaurantService {
         if (restaurant.isEmpty())
             return null;
         ReviewPageResponse rtn = new ReviewPageResponse(restaurant.get());
-        double score = calculateEmotion(restaurant.get(), user);
+        double score = calculateEmotionScore(restaurant.get(), user);
         if (score > 0)
             rtn.setEmotion("positive");
         else if (score < 0)
@@ -64,8 +62,16 @@ public class RestaurantService {
         return characterReview.getReview();
     }
 
+    public String calculateEmotion(double score) {
+        if (score > 3)
+            return "positive";
+        else if (score < -3)
+            return "negative";
+        return "neutral";
+    }
 
-    public double calculateEmotion(Restaurant restaurant, User user) {
+
+    public double calculateEmotionScore(Restaurant restaurant, User user) {
         String mbti = user.getMukbti();
 
         double value = 0;

@@ -58,8 +58,11 @@ public class MapController {
             List<MapPageRestaurantResponse> rtn = restaurants.stream()
                     .map(o -> new MapPageRestaurantResponse(o, user))
                     .collect(Collectors.toList());
-            for (int i = 0 ; i < rtn.size() ; ++i)
-                rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
+            for (int i = 0 ; i < rtn.size() ; ++i) {
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                rtn.get(i).setScore(score);
+                rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
+            }
             if (is_sort)
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
@@ -95,8 +98,11 @@ public class MapController {
                     .map(o -> new MapPageRestaurantResponse(o, user))
                     .collect(Collectors.toList());
 
-            for (int i = 0 ; i < rtn.size() ; ++i)
-                rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
+            for (int i = 0 ; i < rtn.size() ; ++i) {
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                rtn.get(i).setScore(score);
+                rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
+            }
             if (is_sort)
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
@@ -132,8 +138,11 @@ public class MapController {
                     .map(o -> new MapPageRestaurantResponse(o, user))
                     .collect(Collectors.toList());
 
-            for (int i = 0 ; i < rtn.size() ; ++i)
-                rtn.get(i).setScore(restaurantService.calculateEmotion(restaurants.get(i), user));
+            for (int i = 0 ; i < rtn.size() ; ++i) {
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                rtn.get(i).setScore(score);
+                rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
+            }
             if (is_sort)
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
 
