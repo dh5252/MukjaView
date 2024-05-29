@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Setter
 public class ReviewPageResponse {
 
-    private Long restaurantId;
+    private long restaurantId;
     private String restaurantName;
     private List<String> tags;
     private List<String> detailedPictureList;
@@ -27,7 +27,7 @@ public class ReviewPageResponse {
     private String fitMukbti;
 
     public ReviewPageResponse(Restaurant restaurant) {
-        this.restaurantId = restaurant.getRestaurantId();
+        this.restaurantId = (long)restaurant.getRestaurantId();
         this.restaurantName = restaurant.getRestaurantName();
         this.tags = restaurant.getTags().stream()
                 .map(o -> o.getTag().getTagName())

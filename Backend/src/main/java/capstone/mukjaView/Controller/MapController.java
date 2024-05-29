@@ -54,8 +54,6 @@ public class MapController {
             List<MapPageRestaurantResponse> rtn = restaurants.stream()
                     .map(o -> new MapPageRestaurantResponse(o, user))
                     .collect(Collectors.toList());
-            if (!rtn.isEmpty())
-                System.out.println("check : " + rtn.get(0).getRestaurantId());
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
