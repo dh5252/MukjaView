@@ -108,6 +108,13 @@ public class MapController {
 
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
+            System.out.println("Exception Message: " + e.getMessage());
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                System.out.println("Cause: " + cause);
+            }
+            e.printStackTrace();
+
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
