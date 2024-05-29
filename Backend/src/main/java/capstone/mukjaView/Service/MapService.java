@@ -23,9 +23,7 @@ public class MapService {
 
     public Page<Restaurant> getRestaurantsBySizeAndPage(int page, double minLat, double maxLat, double minLong, double maxLong) {
         Pageable pageable = PageRequest.of(page, 300);
-        Page<Restaurant> rtn = restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLong, maxLong, pageable);
-        System.out.println("check : " + rtn.getContent().get(0).getRestaurantId());
-        return rtn;
+        return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLong, maxLong, pageable);
     }
 
     public List<Restaurant> getRestaurantsByTagAndPage(int page, String tag) {

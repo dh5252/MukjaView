@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Setter
 public class MapPageRestaurantResponse {
 
-    private long restaurantId;
+    private Long restaurantId;
     private String restaurantName;
     private List<String> tags;
     private String address;
@@ -23,7 +23,7 @@ public class MapPageRestaurantResponse {
 
 
     public MapPageRestaurantResponse(Restaurant restaurant, User user) {
-        this.restaurantId = (long)getRestaurantId();
+        this.restaurantId = restaurant.getRestaurantId();
         this.restaurantName = restaurant.getRestaurantName();
         this.address = restaurant.getAddress();
         this.latitude = restaurant.getLatitude();
