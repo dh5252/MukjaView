@@ -16,6 +16,7 @@ public class ReviewPageResponse {
     private String restaurantName;
     private List<String> tags;
     private List<String> detailedPictureList;
+    private List<CommentResponseDTO> comments;
     private String address;
     private String thumbnailPictureUrl;
     private String emotion;
@@ -41,6 +42,10 @@ public class ReviewPageResponse {
         this.moodValue = restaurant.getMoodRatio();
         this.serviceValue = restaurant.getServiceRatio();
         this.reasonable = restaurant.isReasonable();
+
+        this.comments = restaurant.getComments().stream()
+                .map(o -> new CommentResponseDTO(o))
+                .collect(Collectors.toList());
 
         //default
         this.isLike = false;

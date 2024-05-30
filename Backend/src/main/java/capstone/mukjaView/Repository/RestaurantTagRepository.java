@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RestaurantTagRepository extends JpaRepository<RestaurantTag, Long> {
-    Page<RestaurantTag> findByTag(String tag, Pageable pageable);
+    Page<RestaurantTag> findByTagTagName(String tag, Pageable pageable);
 }

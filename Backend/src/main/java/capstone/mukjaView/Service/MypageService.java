@@ -4,6 +4,8 @@ import capstone.mukjaView.Domain.Comment;
 import capstone.mukjaView.Domain.Restaurant;
 import capstone.mukjaView.Domain.User;
 import capstone.mukjaView.Domain.UserLikeRestaurant;
+import capstone.mukjaView.Dto.CommentResponseDTO;
+import capstone.mukjaView.Dto.MapPageRestaurantResponse;
 import capstone.mukjaView.Repository.CommentRepository;
 import capstone.mukjaView.Repository.RestaurantRepository;
 import capstone.mukjaView.Repository.UserLikeRestaurantRepository;
@@ -12,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,6 +69,30 @@ public class MypageService {
             userLikeRestaurantRepository.deleteById(userLikeRestaurant.getUserRestaurantId());
             return 0;
         }
+        return 0;
+    }
+
+    @Transactional(readOnly = true)
+    public List<MapPageRestaurantResponse> getLikeRestaurants(String oauthIdentifier) {
+        User user = userRepository.findByUsername(oauthIdentifier);
+        if (user == null)
+            return null;
+        return user.getLikeRestaurants().stream()
+                .map(o -> o.getRestaurant())
+                .collect(Collectors.toList())
+                .stream()
+                .map(o -> new MapPageRestaurantResponse(o, user))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public int deleteComment(Long commentId) {
+
+        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        if (commentOptional.isEmpty())
+            return 1;
+
+        commentRepository.delete(commentOptional.get());
         return 0;
     }
 }

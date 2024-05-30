@@ -32,7 +32,7 @@ public class MapService {
     public List<Restaurant> getRestaurantsByTagAndPage(int page, String tag) {
         Pageable pageable = PageRequest.of(page, 300);
 
-        List<RestaurantTag> restaurantTags = restaurantTagRepository.findByTag(tag, pageable)
+        List<RestaurantTag> restaurantTags = restaurantTagRepository.findByTagTagName(tag, pageable)
                 .getContent();
 
         return restaurantTags.stream()
