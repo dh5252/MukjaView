@@ -35,8 +35,8 @@ public class ReviewPageResponse {
         this.detailedPictureList = restaurant.getPictures().stream()
                 .map(o -> o.getDetailPicture())
                 .collect(Collectors.toList());
-        this.address = address;
-        this.thumbnailPictureUrl = thumbnailPictureUrl;
+        this.address = restaurant.getAddress();
+        this.thumbnailPictureUrl = restaurant.getThumbnailPicture();
         this.flavorValue = restaurant.getFlavorRatio();
         this.moodValue = restaurant.getMoodRatio();
         this.serviceValue = restaurant.getServiceRatio();
