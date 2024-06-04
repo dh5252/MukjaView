@@ -42,7 +42,13 @@ public class RestaurantService {
 
         for (CommentResponseDTO c : rtn.getComments()) {
             User u = userRepository.findByUsername(c.getOauthIdentifier());
-            c.setEmotion(calculateEmotion(calculateEmotionScore(restaurant.get(), u.getMukbti())));
+            String e = calculateEmotion(calculateEmotionScore(restaurant.get(), u.getMukbti()));
+            if (e.equals("positive"))
+                c.setImgUrl(u.getSmilePicture());
+            else if (e.equals("negative"))
+                c.setImgUrl(u.getSadPicture());
+            else
+                c.setImgUrl(u.getNeutralPicture());
         }
 
         double score = calculateEmotionScore(restaurant.get(), user.getMukbti());
