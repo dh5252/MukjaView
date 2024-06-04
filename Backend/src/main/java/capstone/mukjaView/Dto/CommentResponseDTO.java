@@ -14,6 +14,7 @@ public class CommentResponseDTO {
     private String text;
     private String imgUrl;
     private String emotion;
+    private String userMukbti;
 
     public CommentResponseDTO(Comment comment) {
         this.commentId = comment.getCommentId();

@@ -44,6 +44,7 @@ public class RestaurantService {
             User u = userRepository.findByUsername(c.getOauthIdentifier());
             String e = calculateEmotion(calculateEmotionScore(restaurant.get(), u.getMukbti()));
             c.setEmotion(e);
+            c.setUserMukbti(u.getMukbti());
             if (e.equals("positive"))
                 c.setImgUrl(u.getSmilePicture());
             else if (e.equals("negative"))
