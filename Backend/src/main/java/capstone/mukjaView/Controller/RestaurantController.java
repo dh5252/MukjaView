@@ -2,6 +2,7 @@ package capstone.mukjaView.Controller;
 
 import capstone.mukjaView.Dto.CustomOAuth2User;
 import capstone.mukjaView.Dto.ReviewPageResponse;
+import capstone.mukjaView.Dto.ReviewTextResponseDTO;
 import capstone.mukjaView.Service.RestaurantService;
 import capstone.mukjaView.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public class RestaurantController {
 
     @GetMapping("/api/v1/restaurant/{restaurantId}/review")
     @Operation(summary = "get one restaurant review by mukbti")
-    public ResponseEntity<String> returnReviewByMukbti(
+    public ResponseEntity<ReviewTextResponseDTO> returnReviewByMukbti(
             @PathVariable Long restaurantId,
             @RequestParam String mukbti
     ) {
@@ -55,7 +56,7 @@ public class RestaurantController {
         }
         else
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        String rtn = restaurantService.returnReviewByMukbti(restaurantId, mukbti);
+        ReviewTextResponseDTO rtn = restaurantService.returnReviewResponseByMukbti(restaurantId, mukbti);
         return new ResponseEntity<>(rtn, HttpStatus.OK);
     }
 }

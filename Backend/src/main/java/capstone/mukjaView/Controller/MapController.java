@@ -59,7 +59,7 @@ public class MapController {
                     .map(o -> new MapPageRestaurantResponse(o, user))
                     .collect(Collectors.toList());
             for (int i = 0 ; i < rtn.size() ; ++i) {
-                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user.getMukbti());
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }
@@ -99,7 +99,7 @@ public class MapController {
                     .collect(Collectors.toList());
 
             for (int i = 0 ; i < rtn.size() ; ++i) {
-                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user.getMukbti());
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }
@@ -146,7 +146,7 @@ public class MapController {
                     .collect(Collectors.toList());
 
             for (int i = 0 ; i < rtn.size() ; ++i) {
-                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user);
+                double score = restaurantService.calculateEmotionScore(restaurants.get(i), user.getMukbti());
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }

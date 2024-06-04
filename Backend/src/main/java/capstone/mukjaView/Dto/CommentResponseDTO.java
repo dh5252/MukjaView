@@ -12,6 +12,7 @@ public class CommentResponseDTO {
     private String oauthIdentifier;
     private String nickname;
     private String text;
+    private String emotion;
 
     public CommentResponseDTO(Comment comment) {
         this.commentId = comment.getCommentId();

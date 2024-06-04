@@ -5,7 +5,9 @@ import capstone.mukjaView.Domain.CharacterReview;
 import capstone.mukjaView.Domain.Restaurant;
 import capstone.mukjaView.Domain.User;
 import capstone.mukjaView.Domain.UserLikeRestaurant;
+import capstone.mukjaView.Dto.CommentResponseDTO;
 import capstone.mukjaView.Dto.ReviewPageResponse;
+import capstone.mukjaView.Dto.ReviewTextResponseDTO;
 import capstone.mukjaView.Repository.CharacterReviewRepository;
 import capstone.mukjaView.Repository.RestaurantRepository;
 import capstone.mukjaView.Repository.UserRepository;
@@ -37,7 +39,13 @@ public class RestaurantService {
         if (restaurant.isEmpty())
             return null;
         ReviewPageResponse rtn = new ReviewPageResponse(restaurant.get());
-        double score = calculateEmotionScore(restaurant.get(), user);
+
+        for (CommentResponseDTO c : rtn.getComments()) {
+            User u = userRepository.findByUsername(c.getOauthIdentifier());
+            c.setEmotion(calculateEmotion(calculateEmotionScore(restaurant.get(), u.getMukbti())));
+        }
+
+        double score = calculateEmotionScore(restaurant.get(), user.getMukbti());
         if (score > 0)
             rtn.setEmotion("positive");
         else if (score < 0)
@@ -55,11 +63,18 @@ public class RestaurantService {
     }
 
     @Transactional(readOnly = true)
-    public String returnReviewByMukbti(Long restaurantId, String mukbti) {
+    public ReviewTextResponseDTO returnReviewResponseByMukbti(Long restaurantId, String mukbti) {
         CharacterReview characterReview = characterReviewRepository.findByRestaurantRestaurantIdAndCharacterName(restaurantId, mukbti);
         if (characterReview == null)
             return null;
-        return characterReview.getReview();
+
+        Restaurant restaurant = characterReview.getRestaurant();
+
+        ReviewTextResponseDTO rtn = new ReviewTextResponseDTO(restaurant);
+        rtn.setReview(characterReview.getReview());
+        rtn.setEmotion(calculateEmotion(calculateEmotionScore(restaurant, mukbti)));
+
+        return rtn;
     }
 
     public String calculateEmotion(double score) {
@@ -71,8 +86,7 @@ public class RestaurantService {
     }
 
 
-    public double calculateEmotionScore(Restaurant restaurant, User user) {
-        String mbti = user.getMukbti();
+    public double calculateEmotionScore(Restaurant restaurant, String mbti) {
 
         double value = 0;
         int[] wei = {3, 2, 1};
