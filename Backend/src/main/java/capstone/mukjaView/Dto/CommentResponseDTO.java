@@ -13,6 +13,7 @@ public class CommentResponseDTO {
     private String nickname;
     private String text;
     private String imgUrl;
+    private String emotion;
 
     public CommentResponseDTO(Comment comment) {
         this.commentId = comment.getCommentId();

@@ -43,6 +43,7 @@ public class RestaurantService {
         for (CommentResponseDTO c : rtn.getComments()) {
             User u = userRepository.findByUsername(c.getOauthIdentifier());
             String e = calculateEmotion(calculateEmotionScore(restaurant.get(), u.getMukbti()));
+            c.setEmotion(e);
             if (e.equals("positive"))
                 c.setImgUrl(u.getSmilePicture());
             else if (e.equals("negative"))
