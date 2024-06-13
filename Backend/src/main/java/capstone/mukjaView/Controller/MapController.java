@@ -63,9 +63,10 @@ public class MapController {
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }
-            if (is_sort)
+            if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
-
+                rtn = rtn.subList(10 * page, 10 * page + 10);
+            }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -103,9 +104,10 @@ public class MapController {
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }
-            if (is_sort)
+            if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
-
+                rtn = rtn.subList(10 * page, 10 * page + 10);
+            }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println("Exception Message: " + e.getMessage());
@@ -150,9 +152,10 @@ public class MapController {
                 rtn.get(i).setScore(score);
                 rtn.get(i).setEmotion(restaurantService.calculateEmotion(score));
             }
-            if (is_sort)
+            if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
-
+                rtn = rtn.subList(10 * page, 10 * page + 10);
+            }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
