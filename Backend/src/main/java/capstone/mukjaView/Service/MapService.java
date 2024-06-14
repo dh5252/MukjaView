@@ -24,13 +24,13 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public Page<Restaurant> getRestaurantsBySizeAndPage(int page, double minLat, double maxLat, double minLong, double maxLong) {
-        Pageable pageable = PageRequest.of(page, 300);
+        Pageable pageable = PageRequest.of(0, 300);
         return restaurantRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLong, maxLong, pageable);
     }
 
     @Transactional(readOnly = true)
     public List<Restaurant> getRestaurantsByTagAndPage(int page, String tag) {
-        Pageable pageable = PageRequest.of(page, 300);
+        Pageable pageable = PageRequest.of(0, 300);
 
         List<RestaurantTag> restaurantTags = restaurantTagRepository.findByTagTagName(tag, pageable)
                 .getContent();
@@ -42,7 +42,7 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public List<Restaurant> getRestaurantsByNameAndPage(int page, String name) {
-        Pageable pageable = PageRequest.of(page, 300);
+        Pageable pageable = PageRequest.of(0, 300);
 
         return restaurantRepository.findByRestaurantNameContaining(name, pageable)
                 .getContent();
