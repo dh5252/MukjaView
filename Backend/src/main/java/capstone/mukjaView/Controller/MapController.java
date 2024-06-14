@@ -65,6 +65,8 @@ public class MapController {
             }
             if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
+                if (10 * page + 10  > rtn.size() || 10 * page < 0)
+                    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
                 rtn = rtn.subList(10 * page, 10 * page + 10);
             }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
@@ -106,6 +108,8 @@ public class MapController {
             }
             if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
+                if (10 * page + 10  > rtn.size() || 10 * page < 0)
+                    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
                 rtn = rtn.subList(10 * page, 10 * page + 10);
             }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
@@ -154,6 +158,8 @@ public class MapController {
             }
             if (is_sort) {
                 rtn.sort(Comparator.comparing(MapPageRestaurantResponse::getScore).reversed());
+                if (10 * page + 10  > rtn.size() || 10 * page < 0)
+                    return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
                 rtn = rtn.subList(10 * page, 10 * page + 10);
             }
             return new ResponseEntity<>(rtn, HttpStatus.OK);
